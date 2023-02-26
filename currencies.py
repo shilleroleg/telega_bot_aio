@@ -1,7 +1,6 @@
 import requests
 import datetime
 import os
-import config
 
 """
 Загрузка курсов валют с сайта https://openexchangerates.org
