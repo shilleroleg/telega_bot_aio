@@ -1,6 +1,7 @@
 import asyncio
 import os
 from aiogram import Bot, Dispatcher, executor, types
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from weather import register_handlers_weather
@@ -17,7 +18,7 @@ WEBHOOK_URL = f'{WEBHOOK_HOST}{WEBHOOK_PATH}'
 # Объект бота
 bot = Bot(TOKEN)
 # Диспетчер
-dp = Dispatcher(bot)
+dp = Dispatcher(bot, storage=MemoryStorage())
 
 register_handlers_weather(dp)
 register_handlers_common(dp)
