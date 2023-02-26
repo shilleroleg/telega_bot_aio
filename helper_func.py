@@ -23,13 +23,14 @@ def help_ans():
 
 
 def weather_ans(place='Novosibirsk'):
-    weath_dict = getweather.weather(place)
-    str0 = place + " {0}\n".format(str(weath_dict['time']))
-
-    str1 = "Температура: {0} C\nВлажность: {1}%\n".format(str(weath_dict['temperature']),
-                                                          str(weath_dict['humidity']))
-    str2 = "Давление {0} мм.рт.ст\nВетер: {1} м/с\n".format(str(int(weath_dict['pressure'] / 1.33322)),
-                                                            str(weath_dict['wind']))
-    str3 = "UV-индекс: {0}\nUV-риск: {1}\n".format(str(weath_dict['uv_val']),
-                                                   str(weath_dict['uv_risk']))
-    return str0 + str1 + str2 + str3
+    weath_dict = getweather.current_weather(place)
+    return f"""Погода на: {weath_dict['time'].strftime('%Y-%m-%d %H:%M:%S')}
+{place}
+Температура: {weath_dict['temperature']} C,
+Ощущается: {weath_dict['temperature_feel']} C,
+Давление: {weath_dict['pressure']} мм.рт.ст,
+Ветер: {weath_dict['wind']} м/с, 
+UV-индекс: {weath_dict['uv_val']},
+Восход: {weath_dict['sunrise'].strftime('%H:%M:%S')},
+Закат: {weath_dict['sunset'].strftime('%H:%M:%S')}
+    """
