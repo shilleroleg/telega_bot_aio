@@ -1,12 +1,11 @@
 import asyncio
-
+import os
 from aiogram import Bot, Dispatcher, executor, types
 
 import currencies
-import config
 
 # Объект бота
-bot = Bot(config.TOKEN_TELEGRAM)
+bot = Bot(os.environ['TOKEN_TELEGRAM'])
 # Диспетчер
 dp = Dispatcher(bot)
 

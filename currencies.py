@@ -14,7 +14,7 @@ def get_currencies_pair():
     http_req_str = 'https://openexchangerates.org/api/latest.json?app_id='
 
     # Запрос
-    response = requests.get(f'{http_req_str}{config.EXCHANGE_APP_ID}')
+    response = requests.get(f'{http_req_str}{os.environ["EXCHANGE_APP_ID"]}')
     # Получаем JSON
     answer_json = response.json()
     # Выделяем список валют
