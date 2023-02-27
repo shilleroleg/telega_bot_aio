@@ -2,8 +2,6 @@ from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters import Text
 
-from helper_func import help_ans
-
 
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.finish()
@@ -17,7 +15,12 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
 
 async def cmd_help(message: types.Message, state: FSMContext):
     await state.finish()
-    await message.answer(help_ans(), reply_markup=types.ReplyKeyboardRemove())
+    help_ans = """Доступные комманды:
+стикер - посылает случайный стикер.
+погода - погода на данный момент.
+прогноз - прогноз погоды на ближайшие 5 дней.
+курс - курс валют"""
+    await message.answer(help_ans, reply_markup=types.ReplyKeyboardRemove())
 
 
 async def cmd_hello(message: types.Message, state: FSMContext):

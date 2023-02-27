@@ -22,7 +22,7 @@ def current_weather(place='Novosibirsk'):
         uvi_mgr = owm.uvindex_manager()
 
         # Get weather
-        weather = weather_mgr.weather_at_place(place).current_weather
+        weather = weather_mgr.weather_at_place(place).weather
         # geocode town - get lat and lon
         list_of_locations = geocode_mgr.geocode(place, country='RU', limit=1)
         a_town = list_of_locations[0]

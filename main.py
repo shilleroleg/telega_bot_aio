@@ -6,6 +6,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from weather import register_handlers_weather
 from common import register_handlers_common
+from currency import register_handlers_currency
 
 from helper_func import currensy_ans, help_ans, weather_ans
 
@@ -21,6 +22,7 @@ bot = Bot(TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 register_handlers_weather(dp)
+register_handlers_currency(dp)
 register_handlers_common(dp)
 
 
@@ -55,33 +57,6 @@ register_handlers_common(dp)
 #         answer_text = f'Я запомню\n{message.text}'
 #
 #     await message.answer(answer_text)
-
-
-# @dp.callback_query_handler(func=lambda call: True)
-# def callback_inline(callback_query: types.CallbackQuery):
-#     try:
-#         if callback_query.message:
-#             if callback_query.data == 'Nsk':
-#                 answer = weather_ans('Novosibirsk')
-#                 await bot.answer_callback_query(callback_query.id, text=answer)
-#             elif callback_query.data == 'Other':
-#                 # Выводим запрос ввода
-#                 # msg = bot.send_message(callback_query.message.chat.id, 'В каком городе смотрим погоду?')
-#                 # # И регистрируем следующий щаг, к которому перейти после ответа пользователя.
-#                 # # Ответ пользователя передаем в функцию weather_another_town
-#                 # bot.register_next_step_handler(msg, weather_another_town)
-#                 pass
-#
-#             # remove inline buttons
-#             await bot.edit_message_text(chat_id=callback_query.message.chat.id,
-#                                         message_id=callback_query.message.message_id,
-#                                         text="Погода", reply_markup=None)
-#             # show alert
-#             await bot.answer_callback_query(callback_query_id=callback_query.id, show_alert=False,
-#                                             text="Хорошая погода}")
-#
-#     except Exception as e:
-#         print(repr(e))
 
 
 async def on_startup(dp):
