@@ -1,14 +1,11 @@
-import asyncio
 import os
-from aiogram import Bot, Dispatcher, executor, types
+from aiogram import Bot, Dispatcher, executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from weather import register_handlers_weather
 from common import register_handlers_common
 from currency import register_handlers_currency
 
-from helper_func import currensy_ans, help_ans, weather_ans
 
 TOKEN = os.environ['TOKEN_TELEGRAM']
 
