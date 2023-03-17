@@ -1,8 +1,11 @@
+import os
+import requests
+from datetime import datetime, timedelta
+
+import pandas as pd
+
 from pyowm.owm import OWM
 from pyowm.utils.config import get_default_config
-
-import datetime as dt
-import os
 
 # Current weather, minute forecast for 1 hour, hourly forecast for 48 hours,
 # daily forecast for 7 days, historical data for 5 previous days for any location
@@ -10,7 +13,7 @@ import os
 # https://pyowm.readthedocs.io/en/latest/usage-examples-v2/weather-api-usage-examples.html#owm-weather-api-version-2-5-usage-examples
 
 
-def current_weather(place='Novosibirsk'):
+def current_weather(place: str = 'Novosibirsk') -> str:
     try:
         config_dict = get_default_config()
         config_dict['language'] = 'ru'
@@ -31,140 +34,122 @@ def current_weather(place='Novosibirsk'):
         # get uvi
         uvi = uvi_mgr.uvindex_around_coords(lat, lon)
     except Exception as e:
-        print(repr(e))
-        return None
+        return 'Ошибка при получении погоды'
 
-    return_dict = {}
-    return_dict['time'] = weather.reference_time(timeformat='date') + dt.timedelta(hours=7)
-    return_dict['temperature'] = weather.temperature('celsius')['temp']
-    return_dict['temperature_feel'] = weather.temperature('celsius')['feels_like']
-    return_dict['wind'] = weather.wind()['speed']
-    return_dict['pressure'] = weather.barometric_pressure()['press'] * 0.750               # Convert to mmHg
-    return_dict['sunrise'] = weather.sunrise_time(timeformat='date') + dt.timedelta(hours=7)
-    return_dict['sunset'] = weather.sunset_time(timeformat='date') + dt.timedelta(hours=7)
-    return_dict['uv_val'] = uvi.value
+    return_dict = {'place': place,
+                   'time': weather.reference_time(timeformat='date') + timedelta(hours=7),
+                   'temperature': weather.temperature('celsius')['temp'],
+                   'temperature_feel': weather.temperature('celsius')['feels_like'],
+                   'wind': weather.wind()['speed'],
+                   'pressure': weather.barometric_pressure()['press'] * 0.750,
+                   'sunrise': weather.sunrise_time(timeformat='date') + timedelta(hours=7),
+                   'sunset': weather.sunset_time(timeformat='date') + timedelta(hours=7),
+                   'uv_val': uvi.value}
 
-    return return_dict
-
-
-# def forecast_weather(place_fc='Novosibirsk'):
-#     # forecast
-#     try:
-#         owm = OWM(os.environ['API_KEY_WEATHER'], language='ru')
-#         # Query for 3 hours weather forecast for the next 5 days
-#         fc_3h = owm.three_hours_forecast(place_fc)
-#
-#     except Exception as e:
-#         print(repr(e))
-#         return None
-#
-#     forecast_3h = fc_3h.get_forecast()
-#
-#     # Get the list of Weather objects...
-#     # lst = forecast_3h.get_weathers()
-#     # ...or iterate directly over the Forecast object
-#     return_dict = {'time': [],
-#                    'temperature': [],
-#                    'wind': [],
-#                    'pressure': [],
-#                    'detailed_status': []}
-#     for weather_ in forecast_3h:
-#         ref_time = dt.datetime.fromtimestamp(weather_.get_reference_time())
-#         return_dict['time'].append(ref_time)  # Время в Нск относительно  UTC
-#         return_dict['temperature'].append(weather_.get_temperature('celsius')['temp'])
-#         return_dict['wind'].append(weather_.get_wind()['speed'])
-#         return_dict['pressure'].append(int(weather_.get_pressure()['press'] / 1.33322))
-#         return_dict['detailed_status'].append(weather_.get_detailed_status())
-#
-#     # When in time does the forecast begin?
-#     fc_3h.when_starts('date')  # datetime.datetime instance
-#     # ...and when will it end?
-#     fc_3h.when_ends('date')  # datetime.datetime instance
-#
-#     return return_dict
-#
-#
-# # Возвращает четыре значения для каждого дня: ночь, утро, день, вечер
-# def forecast_weather_sparse_dict(place_sp='Novosibirsk'):
-#     weather_dict = forecast_weather(place_sp)
-#
-#     if weather_dict is None:
-#         return None
-#
-#     return_dict_sparse = {'day': [],
-#                           'month': [],
-#                           'day_time': [],
-#                           'temperature': [],
-#                           'wind': [],
-#                           'detailed_status': []}
-#     for i in range(len(weather_dict['time'])):
-#         if weather_dict['time'][i].hour == 4 or weather_dict['time'][i].hour == 7 or \
-#                 weather_dict['time'][i].hour == 13 or weather_dict['time'][i].hour == 22:
-#             return_dict_sparse['day'].append(weather_dict['time'][i].day)
-#             return_dict_sparse['month'].append(weather_dict['time'][i].month)
-#             return_dict_sparse['temperature'].append(weather_dict['temperature'][i])
-#             return_dict_sparse['wind'].append(weather_dict['wind'][i])
-#             return_dict_sparse['detailed_status'].append(weather_dict['detailed_status'][i])
-#
-#         if weather_dict['time'][i].hour == 4:
-#             return_dict_sparse['day_time'].append("Ночь")
-#         elif weather_dict['time'][i].hour == 7:
-#             return_dict_sparse['day_time'].append("Утро")
-#         elif weather_dict['time'][i].hour == 13:
-#             return_dict_sparse['day_time'].append("День")
-#         elif weather_dict['time'][i].hour == 22:
-#             return_dict_sparse['day_time'].append("Вечер")
-#     return return_dict_sparse
-#
-#
-# # Возвращает список значение для вывода
-# def forecast_weather_sparse_list(place_ls='Novosibirsk'):
-#     sparse_dict = forecast_weather_sparse_dict(place_ls)
-#     # if sparse_dict is None:
-#     #     return None
-#
-#     ret_list = []
-#     for count in range(0, len(sparse_dict["day"]) - 1, 4):
-#         ret_list.append("{0}-{1}\n{2} t:{3} {4}\n{5} t:{6} {7}\n{8} t:{9} {10}\n{11} t:{12} {13}\n".format(
-#             str(sparse_dict["day"][count]),
-#             str(sparse_dict["month"][count]),
-#             sparse_dict["day_time"][count],
-#             str(int(sparse_dict["temperature"][count])),
-#             sparse_dict["detailed_status"][count],
-#             sparse_dict["day_time"][count + 1],
-#             str(int(sparse_dict["temperature"][count + 1])),
-#             sparse_dict["detailed_status"][count + 1],
-#             sparse_dict["day_time"][count + 2],
-#             str(int(sparse_dict["temperature"][count + 2])),
-#             sparse_dict["detailed_status"][count + 2],
-#             sparse_dict["day_time"][count + 3],
-#             str(int(sparse_dict["temperature"][count + 3])),
-#             sparse_dict["detailed_status"][count + 3]))
-#
-#     return ret_list
+    return format_out_str_weather(return_dict)
 
 
-if __name__ == '__main__':
-    place = "Novosibirsk"
-    weath_dict = current_weather(place)
-    print(weath_dict)
+def forecast_weather(place: str = 'Novosibirsk') -> str:
+    api_key = os.environ['API_KEY_WEATHER']
+    error_msg = 'Ошибка. Попробуйте позже'
+    try:
+        config_dict = get_default_config()
+        config_dict['language'] = 'ru'
+        owm = OWM(api_key, config_dict)
 
-    str = f"""Погода на: {weath_dict['time'].strftime('%Y-%m-%d %H:%M:%S')}
-{place}
+        # Search for current weather in place
+        geocode_mgr = owm.geocoding_manager()
+        list_of_locations = geocode_mgr.geocode(place, country='RU', limit=1)
+        a_town = list_of_locations[0]
+        lat = a_town.lat
+        lon = a_town.lon
+    except:
+        return error_msg
+
+    api_url = f'https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={api_key}'
+
+    r = requests.get(api_url)
+
+    if r.status_code == 200:
+        answer_list = r.json().get('list')
+        weather_df = parse_weather_forecast(answer_list)
+        weather_df_units = change_units(weather_df)
+        grouped_forecast = group_by_day(weather_df_units)
+        # print(grouped_forecast)
+        out_str = format_out_str_forecast(grouped_forecast)
+        return out_str
+    else:
+        return error_msg
+
+
+def parse_weather_forecast(weathers_list: list[dict]) -> pd.DataFrame:
+    out_df = pd.DataFrame()
+    for weather in weathers_list:
+        all_df = [pd.DataFrame.from_dict(weather['main'], orient='index').T,
+                  pd.DataFrame.from_dict(weather['wind'], orient='index').T]
+
+        df_row = pd.concat(all_df, axis=1)
+        df_row['dt'] = datetime.fromtimestamp(weather['dt'])
+        df_row['date_'] = pd.to_datetime(df_row['dt']).dt.date
+        # Find part of the day
+        hour_ = pd.to_datetime(df_row['dt']).dt.hour
+        df_row['daytime'] = 'День' if 8 <= hour_[0] < 20 else 'Ночь'
+
+        out_df = pd.concat([out_df, df_row])
+    return out_df
+
+
+def change_units(df_in: pd.DataFrame) -> pd.DataFrame:
+    """
+
+    """
+    df_in['temp'] = df_in['temp'] - 273.15
+    df_in['feels_like'] = df_in['feels_like'] - 273.15
+    df_in['pressure'] = df_in['pressure'] / 1.33322
+
+    df_in['date_'] = pd.to_datetime(df_in['dt']).dt.date
+
+    return df_in
+
+
+def group_by_day(df_in: pd.DataFrame) -> pd.DataFrame:
+    df_grouped = (df_in
+                  .groupby(['date_', 'daytime'])
+                  .agg({'temp': 'mean',
+                        'feels_like': 'mean',
+                        'pressure': 'mean',
+                        'humidity': 'mean',
+                        'speed': 'mean'})
+                  .rename({'speed': 'wind'})
+                  .reset_index())
+    return df_grouped
+
+
+def format_out_str_weather(weath_dict: dict) -> str:
+    return f"""Погода на: {weath_dict['time'].strftime('%Y-%m-%d %H:%M:%S')}
+{weath_dict['place']}
 Температура: {weath_dict['temperature']} C,
 Ощущается: {weath_dict['temperature_feel']} C,
 Давление: {weath_dict['pressure']} мм.рт.ст,
 Ветер: {weath_dict['wind']} м/с, 
 UV-индекс: {weath_dict['uv_val']},
+-------
 Восход: {weath_dict['sunrise'].strftime('%H:%M:%S')},
 Закат: {weath_dict['sunset'].strftime('%H:%M:%S')}
-    """
-    print(str)
-    # rt_lst = forecast_weather_sparse_list(place)
+"""
+
+
+def format_out_str_forecast(df: pd.DataFrame) -> str:
+    out_str = f"{'Дата':^5} | {'Время':^6} | {'t,C':^6} | {'Ощущается':^9} | {'Влажность':^10}\n"
+    for _, row in df.iterrows():
+        out_str += f"{row['date_']:%d.%m} | {row['daytime']:^6} | {row['temp']:^6.1f} | {row['feels_like']:^9.1f} | {row['humidity']:^10.0f}\n"
+    return out_str
+
+
+if __name__ == '__main__':
+    #     place = "Novosibirsk"
+    #     weath_dict = current_weather(place)
+    #     print(weath_dict)
     #
-    # print(rt_lst[0])
-    # # print(rt_lst[1])
-    # # print(rt_lst[2])
-    # # print(rt_lst[3])
-    # # print(rt_lst[4])
+    forecast_weather()
 

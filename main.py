@@ -23,39 +23,6 @@ register_handlers_currency(dp)
 register_handlers_common(dp)
 
 
-# @dp.message_handler(content_types=['text'])
-# async def send_text(message):
-#     if message.text.lower() == "привет":  # Отвечает на сообщение
-#         answer_text = f'Привет,  {message.from_user.first_name}'
-#
-#     # elif message.text.lower() == "стикер":          # Отправляет стикер в ответ  на сообщение
-#     #     bot.send_sticker(message.chat.id, choice(stickerlist.sticker_list))
-#     #
-#     # elif message.text.lower() == "погода":
-#     #     keyboard = InlineKeyboardMarkup(row_width=2)
-#     #     item1 = InlineKeyboardButton("Новосибирск", callback_data='Nsk')
-#     #     item2 = InlineKeyboardButton("Другой город", callback_data='Other')
-#     #     keyboard.add(item1, item2)
-#     #
-#     #     await message.answer("Где смотрим погоду?", reply_markup=keyboard)
-#
-#     # elif message.text.lower() == "прогноз":
-#     #     rt_lst = getw.forecast_weather_sparse_list("Novosibirsk")
-#     #
-#     #     bot.send_message(message.chat.id, rt_lst[0])
-#     #     # bot.send_message(message.chat.id, rt_lst[1])
-#     #     # bot.send_message(message.chat.id, rt_lst[2])
-#     #     # bot.send_message(message.chat.id, rt_lst[3])
-#     #     # bot.send_message(message.chat.id, rt_lst[4])
-#     elif message.text.lower() == "курс":
-#         answer_text = currensy_ans()
-#
-#     else:
-#         answer_text = f'Я запомню\n{message.text}'
-#
-#     await message.answer(answer_text)
-
-
 async def on_startup(dp):
     await bot.set_webhook(WEBHOOK_URL)
 
