@@ -37,19 +37,19 @@ def current_weather(place: str = 'Novosibirsk') -> str:
         return 'Ошибка при получении погоды'
 
     return_dict = {'place': place,
-                   'time': weather.reference_time(timeformat='date') + timedelta(hours=7),
+                   'time': weather.reference_time(timeformat='date') + timedelta(hours=3),
                    'temperature': weather.temperature('celsius')['temp'],
                    'temperature_feel': weather.temperature('celsius')['feels_like'],
                    'wind': weather.wind()['speed'],
                    'pressure': weather.barometric_pressure()['press'] * 0.750,
-                   'sunrise': weather.sunrise_time(timeformat='date') + timedelta(hours=7),
-                   'sunset': weather.sunset_time(timeformat='date') + timedelta(hours=7),
+                   'sunrise': weather.sunrise_time(timeformat='date') + timedelta(hours=3),
+                   'sunset': weather.sunset_time(timeformat='date') + timedelta(hours=3),
                    'uv_val': uvi.value}
 
     return format_out_str_weather(return_dict)
 
 
-def forecast_weather(place: str = 'Novosibirsk') -> str:
+def forecast_weather(place: str = 'Moscow') -> str:
     api_key = os.environ['API_KEY_WEATHER']
     error_msg = 'Ошибка. Попробуйте позже'
     try:
