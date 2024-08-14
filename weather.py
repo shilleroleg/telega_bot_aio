@@ -5,7 +5,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from get_weather import current_weather, forecast_weather
 
-available_town_names = ["Новосибирск", "Красноярск", "Другой"]
+available_town_names = ["Санкт-Петербург", "Москва", "Новосибирск", "Другой"]
 
 
 class SelectTown(StatesGroup):
@@ -75,7 +75,7 @@ async def other_town_chosen(message: types.Message, state: FSMContext):
             ans_str = ''
         await message.answer(ans_str, reply_markup=types.ReplyKeyboardRemove())
     except:
-        ans_str = "Что-то пошло не так. Возможно ошибка в названии города"
+        ans_str = "Что-то пошло не так. Возможно, ошибка в названии города"
         await message.reply(ans_str, reply_markup=types.ReplyKeyboardRemove())
 
     await state.finish()
